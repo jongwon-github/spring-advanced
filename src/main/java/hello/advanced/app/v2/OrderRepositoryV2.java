@@ -18,7 +18,7 @@ public class OrderRepositoryV2 {
             2. beginSync() 는 내부에서 다음 traceId 를 생성하면서 트랜잭션ID는 유지하고 level 은 하나 증가시킨다.
             3. beginSync() 는 이렇게 갱신된 traceId 로 새로운 TraceStatus 를 반환한다.
             4. trace.end(status) 를 호출하면서 반환된 TraceStatus 를 전달한다.
-         */
+        */
         TraceStatus status = null;
         try {
             status = trace.beginSync(traceId, "OrderRepository.save()");

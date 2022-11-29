@@ -1,5 +1,6 @@
 package hello.advanced.trace.threadlocal;
 
+import hello.advanced.trace.threadlocal.core.FieldService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
@@ -22,8 +23,8 @@ public class FieldServiceTest {
         Thread threadB = new Thread(userB);
         threadB.setName("thread-B");
         threadA.start(); // A실행
-        sleep(2000); // 동시성 문제 발생 X
-        //sleep(100); // 동시성 문제 발생 O
+        //sleep(2000); // 동시성 문제 발생 X
+        sleep(100); // 동시성 문제 발생 O
         threadB.start(); // B실행
         sleep(3000); // 메인 쓰레드 종료 대기
         log.info("main exit");

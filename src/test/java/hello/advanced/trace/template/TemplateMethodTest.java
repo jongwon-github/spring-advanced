@@ -48,9 +48,7 @@ public class TemplateMethodTest {
 
     @Test
     void templateMethodV2() {
-        /* 익명 내부 클래스 사용
-        * SubClassLogic1, SubClassLogic2 클래스를 만들 필요가 없음
-        * */
+        /* 익명 내부 클래스 사용 : SubClassLogic1, SubClassLogic2 클래스를 만들지 않아도 됨 */
 
         AbstractTemplate template1 = new AbstractTemplate() {
             @Override

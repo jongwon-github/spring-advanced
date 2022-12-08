@@ -17,6 +17,8 @@ public class ThreadLocalLogTrace implements LogTrace {
     private static final String COMPLETE_PREFIX = "<--";
     private static final String EX_PREFIX = "<X-";
 
+    // ThreadLocal 사용시에는 데이터의 사용이 끝나면 반드시 해당 데이터를 삭제해 주어야 한다.
+    // 그렇지 않을 경우 재사용되는 쓰레드가 올바르지 않은 데이터를 참조할 수 있다.s
     private ThreadLocal<TraceId> traceIdHolder = new ThreadLocal<>();
 
     @Override
@@ -77,7 +79,7 @@ public class ThreadLocalLogTrace implements LogTrace {
         if (traceId.isFirstLevel()) {
             traceIdHolder.remove(); // destroy
         } else {
-            traceIdHolder.set(traceId.createNextId());
+            traceIdHolder.set(traceId.createPreviousId());
         }
     }
 

@@ -5,6 +5,7 @@ import hello.advanced.trace.template.code.SubClassLogic1;
 import hello.advanced.trace.template.code.SubClassLogic2;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.autoconfigure.data.r2dbc.DataR2dbcTest;
 
 @Slf4j
 public class TemplateMethodTest {
@@ -42,6 +43,29 @@ public class TemplateMethodTest {
         template1.execute();
 
         AbstractTemplate template2 = new SubClassLogic2();
+        template2.execute();
+    }
+
+    @Test
+    void templateMethodV2() {
+        /* 익명 내부 클래스 사용
+        * SubClassLogic1, SubClassLogic2 클래스를 만들 필요가 없음
+        * */
+
+        AbstractTemplate template1 = new AbstractTemplate() {
+            @Override
+            protected void call() {
+                log.info("비즈니스 로직1 실행");
+            }
+        };
+        template1.execute();
+
+        AbstractTemplate template2 = new AbstractTemplate() {
+            @Override
+            protected void call() {
+                log.info("비즈니스 로직2 실행");
+            }
+        };
         template2.execute();
     }
 

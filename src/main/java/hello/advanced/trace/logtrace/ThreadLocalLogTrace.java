@@ -7,17 +7,12 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ThreadLocalLogTrace implements LogTrace {
 
-    /*
-        1. FieldLogTrace 는 기존에 만들었던 HelloTraceV2 와 거의 같은 기능을 한다.
-        2. TraceId 를 동기화 하는 부분만 파라미터를 사용하는 것에서 TraceId traceIdHolder 필드를 사용하도록 변경되었다.
-        3. 이제 직전 로그의 TraceId 는 파라미터로 전달되는 것이 아니라 FieldLogTrace 의 필드인 traceIdHolder 에 저장된다.
-    */
-
     private static final String START_PREFIX = "-->";
     private static final String COMPLETE_PREFIX = "<--";
     private static final String EX_PREFIX = "<X-";
 
     /*
+        ThreadLocal 을 사용해 FieldLogTrace.java 에서 발생하는 동시성 문제 해결
         ThreadLocal 사용시에는 데이터의 사용이 끝나면 반드시 해당 데이터를 삭제해 주어야 한다.
         그렇지 않을 경우 재사용되는 쓰레드가 올바르지 않은 데이터를 참조할 수 있다.
     */
@@ -33,12 +28,6 @@ public class ThreadLocalLogTrace implements LogTrace {
     }
 
     private void syncTraceId() {
-        /*
-            1. TraceId 를 새로 만들거나 앞선 로그의 TraceId 를 참고해서 동기화하고, level 도 증가한다.
-            2. 최초 호출이면 TraceId 를 새로 만든다.
-            3. 직전 로그가 있으면 해당 로그의 TraceId 를 참고해서 동기화하고, level 도 하나 증가한다.
-            4. 결과를 traceIdHolder 에 보관한다.
-        */
         TraceId traceId = traceIdHolder.get();
         if (traceId == null) {
             traceIdHolder.set(new TraceId());
@@ -50,7 +39,6 @@ public class ThreadLocalLogTrace implements LogTrace {
     @Override
     public void end(TraceStatus status) {
         complete(status, null);
-
     }
 
     @Override
@@ -72,11 +60,6 @@ public class ThreadLocalLogTrace implements LogTrace {
     }
 
     private void releaseTraceId() {
-        /*
-            1. 메서드를 추가로 호출할 때는 level 이 하나 증가해야 하지만, 메서드 호출이 끝나면 level 이 하나 감소해야 한다.
-            2. releaseTraceId() 는 level 을 하나 감소한다.
-            3. 만약 최초 호출( level==0 )이면 내부에서 관리하는 traceId 를 제거한다.
-        */
         TraceId traceId = traceIdHolder.get();
         if (traceId.isFirstLevel()) {
             traceIdHolder.remove(); // destroy
